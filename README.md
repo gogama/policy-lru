@@ -16,7 +16,7 @@ Examples
 
 Below is an example of the most basic LRU cache with a simple eviction
 policy based on a maximum number of keys. More examples are available in
-the [API reference documentation](https://pkg.go.dev/github.com/gogama/policy-lru.
+the [API reference documentation](https://pkg.go.dev/github.com/gogama/policy-lru).
 
 ```go
 package main
