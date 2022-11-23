@@ -19,6 +19,8 @@ type Policy[Key, Value any] interface {
 
 // Handler can optionally be used to handle cache removal events.
 type Handler[Key, Value any] interface {
+	// Added is called after an element is added to the cache.
+	Added(k Key, old, new Value, update bool)
 	// Removed is called after an element is removed from the cache.
 	//
 	// Removal can happen either by operation of the eviction policy or
@@ -73,13 +75,23 @@ func (c *Cache[Key, Value]) Add(k Key, v Value) {
 		c.ll = list.New()
 		c.cache = make(map[Key]*list.Element)
 	}
-	if ee, ok := c.cache[k]; ok {
-		c.ll.MoveToFront(ee)
-		ee.Value.(*entry[Key, Value]).value = v
+	h := c.Handler
+	if ele, ok := c.cache[k]; ok {
+		c.ll.MoveToFront(ele)
+		e := ele.Value.(*entry[Key, Value])
+		old := e.value
+		e.value = v
+		if h != nil {
+			h.Added(k, old, v, true)
+		}
 		return
 	}
 	ele := c.ll.PushFront(&entry[Key, Value]{k, v})
 	c.cache[k] = ele
+	if h != nil {
+		var old Value
+		h.Added(k, old, v, false)
+	}
 	c.Evict()
 }
 

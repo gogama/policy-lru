@@ -36,7 +36,7 @@ func TestZeroValue(t *testing.T) {
 	})
 }
 
-func TestGet(t *testing.T) {
+func TestAddAndGet(t *testing.T) {
 	t.Run("string_hit", func(t *testing.T) {
 		lru := New[string, int](nil)
 
@@ -110,12 +110,38 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, false, value2)
 	})
 
-	t.Run("with_handler", func(t *testing.T) {
+	t.Run("with_added_handler", func(t *testing.T) {
+		var olds, news []string
+		var updateds []bool
+		lru := NewWithHandler[string, string](MaxCount[string, string](2), AddedFunc[string, string](func(k string, old, new string, updated bool) {
+			olds = append(olds, k, old)
+			news = append(news, k, new)
+			updateds = append(updateds, updated)
+		}))
+
+		lru.Add("foo", "bar")
+		lru.Add("foo", "baz")
+		lru.Add("hello", "world")
+		lru.Add("foo", "qux")
+		lru.Add("bing", "bong")
+		lru.Add("foo", "pew")
+		lru.Add("hello", "folks-people")
+		value, ok := lru.Get("foo")
+
+		assert.Equal(t, 2, lru.Len())
+		assert.True(t, ok)
+		assert.Equal(t, "pew", value)
+		assert.Equal(t, []string{"foo", "", "foo", "bar", "hello", "", "foo", "baz", "bing", "", "foo", "qux", "hello", ""}, olds)
+		assert.Equal(t, []string{"foo", "bar", "foo", "baz", "hello", "world", "foo", "qux", "bing", "bong", "foo", "pew", "hello", "folks-people"}, news)
+		assert.Equal(t, []bool{false, true, false, true, false, true, false}, updateds)
+	})
+
+	t.Run("with_removed_handler", func(t *testing.T) {
 		var removedCount int
 		var removedKey string
 		var removedValue string
 		var removedTime time.Time
-		lru := NewWithHandler[string, string](MaxCount[string, string](2), HandlerFunc[string, string](func(k string, v string) {
+		lru := NewWithHandler[string, string](MaxCount[string, string](2), RemovedFunc[string, string](func(k string, v string) {
 			removedCount++
 			removedKey = k
 			removedValue = v
@@ -163,11 +189,11 @@ func TestRemove(t *testing.T) {
 		assert.Equal(t, 0, lru.Len())
 	})
 
-	t.Run("with_handler", func(t *testing.T) {
+	t.Run("with_removed_handler", func(t *testing.T) {
 		var removedKey int
 		var removedValue string
 		var removedTime time.Time
-		lru := NewWithHandler[int, string](nil, HandlerFunc[int, string](func(k int, v string) {
+		lru := NewWithHandler[int, string](nil, RemovedFunc[int, string](func(k int, v string) {
 			removedKey = k
 			removedValue = v
 			removedTime = time.Now()
@@ -236,7 +262,7 @@ func TestEvict(t *testing.T) {
 
 func TestClear(t *testing.T) {
 	var removed []int
-	lru := NewWithHandler[int, int](nil, HandlerFunc[int, int](func(k, v int) {
+	lru := NewWithHandler[int, int](nil, RemovedFunc[int, int](func(k, v int) {
 		removed = append(removed, k, v)
 	}))
 
