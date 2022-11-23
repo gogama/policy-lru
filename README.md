@@ -11,10 +11,12 @@ Use It If You Want
 3. To define your own eviction policy, for example only evict from the
    cache when consumed memory or disk space exceeds some threshold.
 
-Example
-=======
+Examples
+========
 
-Basic LRU cache.
+Below is an example of the most basic LRU cache with a simple eviction
+policy based on a maximum number of keys. More examples are available in
+the [API reference documentation](https://pkg.go.dev/github.com/gogama/policy-lru.
 
 ```go
 package main

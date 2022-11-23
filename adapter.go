@@ -1,3 +1,10 @@
+// Copyright 2022 The policy-lru Authors. All rights reserved.
+//
+// Use of this source code is governed by the Apache License, Version
+// 2.0 (the "License"); you may not use this file except in compliance
+// with the License. You may find a copy of the license in the file
+// LICENSE or at  http://www.apache.org/licenses/LICENSE-2.0.
+
 package policylru
 
 // The PolicyFunc type is an adapter that allows you to use an ordinary

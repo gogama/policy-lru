@@ -1,3 +1,10 @@
+// Copyright 2022 The policy-lru Authors. All rights reserved.
+//
+// Use of this source code is governed by the Apache License, Version
+// 2.0 (the "License"); you may not use this file except in compliance
+// with the License. You may find a copy of the license in the file
+// LICENSE or at  http://www.apache.org/licenses/LICENSE-2.0.
+
 package policylru_test
 
 import (
@@ -6,6 +13,8 @@ import (
 	policylru "github.com/gogama/policy-lru"
 )
 
+// This example illustrates the most basic LRU cache where the eviction
+// policy is based on limiting the number of keys in the cache.
 func ExampleCache_withMaxCount() {
 	lru := policylru.New[string, string](policylru.MaxCount[string, string](10))
 	lru.Add("foo", "bar")
@@ -38,6 +47,9 @@ func (p *myPolicy) Removed(k string, v myValue) {
 	fmt.Printf("Removed %q with size %d, total size is now %d.\n", k, v.valueSize, p.totalSize)
 }
 
+// This example illustrates a more complex LRU cache where the eviction
+// policy is based on the total aggregate size of the values in the
+// cache.
 func ExampleCache_withMaxSizePolicy() {
 	policy := &myPolicy{}
 	lru := policylru.NewWithHandler[string, myValue](policy, policy)

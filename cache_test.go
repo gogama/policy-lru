@@ -1,3 +1,15 @@
+// Copyright 2022 The policy-lru Authors. All rights reserved.
+//
+// Use of this source code is governed by the Apache License, Version
+// 2.0 (the "License"); you may not use this file except in compliance
+// with the License. You may find a copy of the license in the file
+// LICENSE or at  http://www.apache.org/licenses/LICENSE-2.0.
+//
+// Some parts of this file are heavily inspired by package lru available
+// at https://github.com/golang/groupcache/tree/master/lru. Package lru
+// is also licensed under the License. Some lines of code in this file
+// may be Copyright 2013 Google Inc.
+
 package policylru
 
 import (
