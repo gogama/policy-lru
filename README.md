@@ -1,12 +1,13 @@
 # policy-lru
 
-A very simple LRU cache in GoLang supporting Go generics and defining
-your own custom eviction policies.
+A simple LRU cache in GoLang with custom evicton policies and Go
+generics support.
 
 Use It If You Want
 ==================
 
-1. A lightweight LRU with no external dependencies.
+1. A lightweight least recently used ("LRU") cache with no external
+   dependencies.
 2. Go 1.18 generics.
 3. To define your own eviction policy, for example only evict from the
    cache when consumed memory or disk space exceeds some threshold.
