@@ -7,8 +7,8 @@
 
 package policylru
 
-// The PolicyFunc type is an adapter that allows you to use an ordinary
-// function as a Policy without implementing the Policy interface.
+// PolicyFunc is an adapter that allows you to use an ordinary function
+// as a Policy without implementing the Policy interface.
 //
 // If f is a function a signature matching that of PolicyFunc, then
 // PolicyFunc[k, v](f) is a Policy that calls f.
@@ -18,9 +18,9 @@ func (f PolicyFunc[Key, Value]) Evict(k Key, v Value, n int) bool {
 	return f(k, v, n)
 }
 
-// The AddedFunc type is an adapter that allows you to use a single
-// ordinary add-handling function as a Handler without implementing
-// the whole Handler interface.
+// AddedFunc is an adapter that allows you to use a single ordinary
+// add-handling function as a Handler without implementing the whole
+// Handler interface.
 //
 // If f is a function whose signature matches the Added method of a
 // Handler[k, v], then AddedFunc[k, v](f) is a Handler[k, v] with a
@@ -34,9 +34,9 @@ func (f AddedFunc[Key, Value]) Added(k Key, old, new Value, updated bool) {
 func (f AddedFunc[Key, Value]) Removed(k Key, v Value) {
 }
 
-// The RemovedFunc type is an adapter that allows you to use a single
-// ordinary remove-handling function as a Handler without implementing
-// the whole Handler interface.
+// RemovedFunc is an adapter that allows you to use a single ordinary
+// remove-handling function as a Handler without implementing the whole
+// Handler interface.
 //
 // If f is a function whose signature matches the Removed method of a
 // Handler[k, v], then RemovedFunc[k, v](f) is a Handler[k, v] with a

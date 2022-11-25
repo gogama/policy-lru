@@ -14,8 +14,7 @@ func (p maxCountPolicy[Key, Value]) Evict(_ Key, _ Value, n int) bool {
 }
 
 // MaxCount returns a Policy that evicts the oldest key from the Cache
-// whenever the total number of keys in the cash exceeds the given
-// maximum count.
+// when the number of keys in the cache exceeds the given maximum count.
 func MaxCount[Key, Value any](n int) Policy[Key, Value] {
 	return maxCountPolicy[Key, Value](n)
 }

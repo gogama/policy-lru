@@ -18,7 +18,7 @@ import (
 	"container/list"
 )
 
-// Policy represents a cache eviction policy.
+// Policy is a cache eviction policy.
 type Policy[Key, Value any] interface {
 	// Evict decides whether a given cache entry should be evicted
 	// from the cache based on the entry's key and value, and the
@@ -29,19 +29,24 @@ type Policy[Key, Value any] interface {
 	Evict(k Key, v Value, n int) bool
 }
 
-// Handler can optionally be used to handle cache removal events.
+// Handler is an optional component that receives events when items are
+// added to or removed from the cache.
 type Handler[Key, Value any] interface {
 	// Added is called after an element is added to the cache.
 	Added(k Key, old, new Value, update bool)
 	// Removed is called after an element is removed from the cache.
 	//
 	// Removal can happen either by operation of the eviction policy or
-	// by a direct call to the Cache's Remove method.
+	// by a direct call to the Cache's Remove or Clear methods.
 	Removed(k Key, v Value)
 }
 
 // Cache is a Policy-driven LRU cache. It is not safe for concurrent
 // access.
+//
+// The API for Cache is essentially identical to the one defined by
+// lru.Cache in https://github.com/golang/groupcache, so Cache is usable
+// as a drop-in replacement for lru.Cache.
 type Cache[Key comparable, Value any] struct {
 	// Policy is the cache eviction policy. If Policy is nil, no element
 	// will ever be evicted from the cache.
@@ -66,12 +71,12 @@ func New[Key comparable, Value any](policy Policy[Key, Value]) *Cache[Key, Value
 	return NewWithHandler(policy, nil)
 }
 
-// NewWithHandler creates a new policy-driven Cache with a removal
-// event handler.
+// NewWithHandler creates a new policy-driven Cache with an add and
+// remove event handler.
 //
 // If policy is nil, the cache has no limit, and it is assumed that
-// eviction is handled by the caller. If handler is nil, removal events
-// will not be generated.
+// eviction is handled by the caller. If handler is nil, no events will
+// be generated.
 func NewWithHandler[Key comparable, Value any](policy Policy[Key, Value], handler Handler[Key, Value]) *Cache[Key, Value] {
 	return &Cache[Key, Value]{
 		Policy:  policy,
